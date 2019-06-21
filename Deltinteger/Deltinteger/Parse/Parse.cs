@@ -71,6 +71,7 @@ namespace Deltin.Deltinteger.Parse
 
                 for (int i = 0; i < rules.Length; i++)
                 {
+
                     try
                     {
                         var result = Translate.GetRule(ruleSetNode.Rules[i], root, varCollection, userMethods.ToArray());

@@ -77,6 +77,16 @@ namespace Deltin.Deltinteger
 
             ParserData result = ParserData.GetParser(text, null);
 
+            if (result.Diagnostics.Count > 0)
+            {
+                ParseLog.Write(LogLevel.Normal, new ColorMod("Build failed:", ConsoleColor.Red));
+                foreach (var diag in result.Diagnostics)
+                {
+                    ParseLog.Write(LogLevel.Normal, new ColorMod(string.Format("[{0}]: {1} (at line {2}, char {3})", diag.severity, diag.message, diag.range.start.line, diag.range.start.character), ConsoleColor.Red));
+                }
+                return;
+            }
+
             ParseLog.Write(LogLevel.Normal, new ColorMod("Build succeeded.", ConsoleColor.Green));
 
             // List all variables
@@ -120,9 +130,19 @@ namespace Deltin.Deltinteger
 
             builder.AppendLine("// --- Variable Guide ---");
 
-            foreach(var var in varCollection.AllVars)
+            if (varCollection == null)
+            {
+                throw new Exception("varCollection was null! Parser error?");
+            }
+
+            if (rules == null)
+            {
+                throw new Exception("rules was null! Parser error?");
+            }
+
+            foreach (var var in varCollection.AllVars)
                 builder.AppendLine("// " + (var.IsGlobal ? "global" : "player") + " " + var.Variable + "[" + var.Index + "] " + var.Name);
-            
+
             builder.AppendLine();
 
             Log debugPrintLog = new Log("Tree");
